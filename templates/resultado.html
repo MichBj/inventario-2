@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Resultado{% endblock %}
+
+{% block content %}
+    <h1>{{ titulo }}</h1>
+    {% if datos %}
+        <ul>
+            {% for dato in datos %}
+                <li>{{ dato }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No se encontraron datos.</p>
+    {% endif %}
+{% endblock %}
