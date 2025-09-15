@@ -3,29 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Mi Proyecto{% endblock %}</title>
+    <title>{% block title %}Mi Aplicación{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <header class="navbar">
-        <a href="{{ url_for('index') }}">Inicio</a>
-        <a href="{{ url_for('mostrar_formulario') }}">Formulario de Pruebas</a>
+    <header>
+        <h1>Gestión de Usuarios</h1>
     </header>
-
-    <main class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
+    <main>
         {% block content %}{% endblock %}
     </main>
-
     <footer>
-        &copy; 2023 Mi Proyecto Flask.
+        <p>&copy; 2025 - Proyecto xAI</p>
     </footer>
 </body>
 </html>

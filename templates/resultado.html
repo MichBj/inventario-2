@@ -1,16 +1,13 @@
 {% extends "base.html" %}
-
 {% block title %}Resultado{% endblock %}
-
 {% block content %}
-    <h1>{{ titulo }}</h1>
-    {% if datos %}
-        <ul>
-            {% for dato in datos %}
-                <li>{{ dato }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No se encontraron datos.</p>
-    {% endif %}
+    <h2>Resultado del Registro</h2>
+    <p>¡Gracias, {{ nombre }}! Tus datos han sido registrados.</p>
+    <h3>Lista de Usuarios</h3>
+    <ul>
+        {% for usuario in usuarios %}
+            <li>ID: {{ usuario[0] }}, Nombre: {{ usuario[1] }}, Email: {{ usuario[2] }}, Fecha: {{ usuario[3] }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('index') }}">Volver al inicio</a>
 {% endblock %}

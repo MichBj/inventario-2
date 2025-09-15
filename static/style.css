@@ -1,170 +1,49 @@
-/* Estilos Generales para el Tema Oscuro */
 body {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0;
-    background-color: #121212; /* Fondo negro-gris muy oscuro */
-    color: #e0e0e0; /* Un gris claro para el texto general */
-}
-
-.container {
-    max-width: 960px;
-    margin: 30px auto;
     padding: 20px;
-    background-color: #1f1f1f; /* Un gris oscuro para el contenido principal */
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    background-color: #f4f4f4;
 }
-
-h1, h2, h3 {
-    color: #ffffff; /* Blanco para los títulos */
-    margin-bottom: 25px;
-}
-
-a {
-    color: #00bcd4; /* Un color cian brillante para los enlaces */
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-a:hover {
-    color: #4dd0e1;
-}
-
-/* Barra de navegación */
-.navbar {
-    background-color: #1f1f1f; /* Mismo color que el contenedor para coherencia */
-    padding: 15px 0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    display: flex;
-    justify-content: center;
-}
-
-.navbar a {
-    color: #e0e0e0; /* Texto claro para los enlaces del nav */
-    font-weight: bold;
-    margin: 0 20px;
-    transition: color 0.3s ease;
-}
-
-.navbar a:hover {
-    color: #ffffff;
-}
-
-/* Estilo de la tabla de productos */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-th, td {
-    border: 1px solid #444; /* Bordes de un gris más oscuro */
-    padding: 12px;
-    text-align: left;
-}
-
-th {
-    background-color: #2c2c2c; /* Un gris oscuro para los encabezados */
-    color: #ffffff; /* Texto blanco en los encabezados */
-}
-
-tr:nth-child(even) {
-    background-color: #242424; /* Un gris más oscuro para filas pares */
-}
-
-tr:hover {
-    background-color: #383838; /* Gris más claro al pasar el cursor */
-}
-
-/* Estilo de los formularios y botones */
-.search-section, .links-grid {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.form-container {
-    background-color: #2c2c2c;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-.form-container h2 {
-    margin-top: 0;
-    color: #fff;
-}
-
-input[type="text"],
-input[type="number"],
-button {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #444;
+header, footer {
     background-color: #333;
-    color: #e0e0e0;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-button[type="submit"],
-.btn-secondary {
-    background-color: #00897b; /* Verde-azul para el botón 'Buscar' y 'Nuevo' */
     color: white;
-    cursor: pointer;
-    font-size: 16px;
-    border: none;
-    transition: background-color 0.3s ease;
+    text-align: center;
+    padding: 10px;
 }
-
-button[type="submit"]:hover,
-.btn-secondary:hover {
-    background-color: #00695c;
+main {
+    max-width: 800px;
+    margin: 0 auto;
 }
-
-.btn-delete {
-    background-color: #d32f2f; /* Rojo oscuro para el botón de 'Eliminar' */
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+h2 {
+    color: #333;
 }
-
-.btn-delete:hover {
-    background-color: #b71c1c;
-}
-
-/* Mensajes Flash */
-.flash-message {
-    padding: 10px 15px;
-    margin-bottom: 15px;
+form {
+    background-color: white;
+    padding: 20px;
     border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+label {
     font-weight: bold;
-    text-align: center;
 }
-
-.flash-success {
-    background-color: #2e7d32;
-    color: #c8e6c9;
-    border: 1px solid #1b5e20;
+input {
+    padding: 5px;
+    margin-bottom: 10px;
 }
-
-.flash-error, .flash-warning, .flash-info {
-    background-color: #c62828;
-    color: #ffebee;
-    border: 1px solid #b71c1c;
+button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
 }
-
-/* Footer */
-footer {
-    text-align: center;
-    margin-top: 30px;
-    padding: 15px;
-    color: #999;
-    font-size: 0.9em;
-    border-top: 1px solid #333;
+button:hover {
+    background-color: #218838;
+}
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
 }

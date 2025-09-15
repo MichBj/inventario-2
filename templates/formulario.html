@@ -1,52 +1,14 @@
 {% extends "base.html" %}
-
 {% block title %}Formulario{% endblock %}
-
 {% block content %}
-    <h1>Formulario de Datos</h1>
-
-    <div class="form-container">
-        <h2>Guardar en Archivo de Texto (.txt)</h2>
-        <form action="{{ url_for('guardar_txt') }}" method="post">
-            <input type="text" name="data" placeholder="Escribe algo..." required>
-            <button type="submit">Guardar en TXT</button>
-        </form>
-    </div>
-
-    <div class="form-container">
-        <h2>Guardar en Archivo JSON</h2>
-        <form action="{{ url_for('guardar_json') }}" method="post">
-            <input type="text" name="nombre" placeholder="Nombre" required>
-            <input type="text" name="valor" placeholder="Valor" required>
-            <button type="submit">Guardar en JSON</button>
-        </form>
-    </div>
-
-    <div class="form-container">
-        <h2>Guardar en Archivo CSV</h2>
-        <form action="{{ url_for('guardar_csv') }}" method="post">
-            <input type="text" name="nombre" placeholder="Nombre" required>
-            <input type="text" name="valor" placeholder="Valor" required>
-            <button type="submit">Guardar en CSV</button>
-        </form>
-    </div>
-
-    <div class="form-container">
-        <h2>Guardar en Base de Datos (SQLite)</h2>
-        <form action="{{ url_for('guardar_bd') }}" method="post">
-            <input type="text" name="nombre" placeholder="Nombre de Usuario" required>
-            <input type="text" name="email" placeholder="Email" required>
-            <button type="submit">Guardar en BD</button>
-        </form>
-    </div>
-
-    <div class="form-container">
-        <h2>Ver Datos Guardados</h2>
-        <div class="links-grid">
-            <a href="{{ url_for('leer_txt') }}">Ver TXT</a>
-            <a href="{{ url_for('leer_json') }}">Ver JSON</a>
-            <a href="{{ url_for('leer_csv') }}">Ver CSV</a>
-            <a href="{{ url_for('leer_bd') }}">Ver BD</a>
-        </div>
-    </div>
+    <h2>Registro de Usuario</h2>
+    <form method="POST" action="{{ url_for('formulario') }}">
+        <label for="nombre">Nombre:</label><br>
+        <input type="text" id="nombre" name="nombre" required><br><br>
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required><br><br>
+        <label for="fecha">Fecha (YYYY-MM-DD):</label><br>
+        <input type="date" id="fecha" name="fecha" required><br><br>
+        <button type="submit">Enviar</button>
+    </form>
 {% endblock %}

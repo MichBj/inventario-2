@@ -1,9 +1,7 @@
 {% extends "base.html" %}
-
 {% block title %}Inicio{% endblock %}
-
 {% block content %}
-    <h1>Bienvenido a tu Proyecto Flask</h1>
-    <p>Esta es una página de ejemplo para demostrar la estructura del proyecto y los enlaces a las demás funcionalidades.</p>
-    <p>Haz clic en "Formulario de Pruebas" para probar la persistencia de datos.</p>
+    <h2>Bienvenido</h2>
+    <p>Registra un nuevo usuario <a href="{{ url_for('formulario') }}">aquí</a>.</p>
+    <p><a href="{{ url_for('resultado') }}">Ver resultados</a></p>
 {% endblock %}

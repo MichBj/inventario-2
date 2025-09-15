@@ -1,136 +1,131 @@
-from flask import Flask, render_template, redirect, url_for, flash, request
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from flask import Flask, render_template, request, redirect, url_for
+import mysql.connector
+from mysql.connector import Error
 import os
 import json
 import csv
+from Conexion.conexion import get_db_connection
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database/usuarios.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'dev-secret-key'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATOS_DIR = os.path.join(BASE_DIR, 'datos')
 
-db = SQLAlchemy(app)
+# ---
+# CONFIGURACIÓN DE LA BASE DE DATOS Y RUTA
+# ---
 
-class Usuario(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    
-    def __repr__(self):
-        return f'<Usuario {self.nombre}>'
+def init_db():
+    connection = get_db_connection()
+    if connection and connection.is_connected():
+        cursor = connection.cursor()
+        try:
+            cursor.execute('''CREATE TABLE IF NOT EXISTS usuarios 
+                             (id INT AUTO_INCREMENT PRIMARY KEY, 
+                              nombre VARCHAR(255) NOT NULL, 
+                              email VARCHAR(255) NOT NULL UNIQUE, 
+                              fecha VARCHAR(255))''')
+            connection.commit()
+            print("Tabla 'usuarios' creada o ya existente.")
+        except Error as e:
+            print(f"Error al crear la tabla: {e}")
+        finally:
+            cursor.close()
+            connection.close()
+    else:
+        print("No se pudo establecer conexión con la base de datos.")
 
-@app.context_processor
-def inject_now():
-    return {'now': datetime.utcnow}
-
+# Inicializar la base de datos al iniciar la aplicación
 with app.app_context():
-    if not os.path.exists('database'):
-        os.makedirs('database')
-    db.create_all()
+    init_db()
+
+# Asegurar que la carpeta 'datos' existe
+os.makedirs(DATOS_DIR, exist_ok=True)
+
+# ---
+# RUTAS DE LA APLICACIÓN
+# ---
 
 @app.route('/')
 def index():
-    return render_template('index.html', title='Inicio')
+    return render_template('index.html')
 
-@app.route('/formulario')
-def mostrar_formulario():
-    return render_template('formulario.html', title='Formulario de Datos')
+@app.route('/formulario', methods=['GET', 'POST'])
+def formulario():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        email = request.form['email']
+        fecha = request.form['fecha']
 
-# ==================== Rutas para Persistencia con Archivos ====================
+        connection = get_db_connection()
+        if connection and connection.is_connected():
+            cursor = connection.cursor()
+            try:
+                # Insertar en la base de datos
+                cursor.execute("INSERT INTO usuarios (nombre, email, fecha) VALUES (%s, %s, %s)", 
+                               (nombre, email, fecha))
+                connection.commit()
 
-@app.route('/guardar-txt', methods=['POST'])
-def guardar_txt():
-    data_to_save = request.form.get('data')
-    if not os.path.exists('datos'):
-        os.makedirs('datos')
-    with open('datos/datos.txt', 'a') as f:
-        f.write(data_to_save + '\n')
-    flash("Datos guardados en datos.txt", 'success')
-    return redirect(url_for('leer_txt'))
+                # Guardar en archivos
+                try:
+                    # Guardar en archivo de texto
+                    with open(os.path.join(DATOS_DIR, 'datos.txt'), 'a') as f:
+                        f.write(f"{nombre},{email},{fecha}\n")
 
-@app.route('/leer-txt')
-def leer_txt():
-    datos = []
-    if os.path.exists('datos/datos.txt'):
-        with open('datos/datos.txt', 'r') as f:
-            datos = [line.strip() for line in f.readlines()]
-    return render_template('resultado.html', titulo="Datos de TXT", datos=datos)
+                    # Guardar en archivo JSON (formato de array)
+                    json_path = os.path.join(DATOS_DIR, 'datos.json')
+                    data = {"nombre": nombre, "email": email, "fecha": fecha}
+                    json_data = []
 
-@app.route('/guardar-json', methods=['POST'])
-def guardar_json():
-    new_data = {
-        'nombre': request.form.get('nombre'),
-        'valor': request.form.get('valor')
-    }
-    if not os.path.exists('datos'):
-        os.makedirs('datos')
-    all_data = []
-    if os.path.exists('datos/datos.json') and os.path.getsize('datos/datos.json') > 0:
-        with open('datos/datos.json', 'r') as f:
-            all_data = json.load(f)
-    all_data.append(new_data)
-    with open('datos/datos.json', 'w') as f:
-        json.dump(all_data, f, indent=4)
-    flash("Datos guardados en datos.json", 'success')
-    return redirect(url_for('leer_json'))
+                    if os.path.exists(json_path) and os.path.getsize(json_path) > 0:
+                        with open(json_path, 'r') as f:
+                            json_data = json.load(f)
+                    
+                    json_data.append(data)
 
-@app.route('/leer-json')
-def leer_json():
-    datos = []
-    if os.path.exists('datos/datos.json') and os.path.getsize('datos/datos.json') > 0:
-        with open('datos/datos.json', 'r') as f:
-            datos = json.load(f)
-    return render_template('resultado.html', titulo="Datos de JSON", datos=datos)
+                    with open(json_path, 'w') as f:
+                        json.dump(json_data, f, indent=4)
+                    
+                    # Guardar en archivo CSV
+                    csv_path = os.path.join(DATOS_DIR, 'datos.csv')
+                    with open(csv_path, 'a', newline='') as f:
+                        writer = csv.writer(f)
+                        if os.path.getsize(csv_path) == 0:
+                            writer.writerow(['nombre', 'email', 'fecha'])  # Escribir encabezado
+                        writer.writerow([nombre, email, fecha])
+                
+                except Exception as e:
+                    print(f"Error al escribir en los archivos: {e}")
 
-@app.route('/guardar-csv', methods=['POST'])
-def guardar_csv():
-    headers = ['nombre', 'valor']
-    new_row = [request.form.get('nombre'), request.form.get('valor')]
-    if not os.path.exists('datos'):
-        os.makedirs('datos')
-    file_exists = os.path.exists('datos/datos.csv')
-    with open('datos/datos.csv', 'a', newline='') as f:
-        writer = csv.writer(f)
-        if not file_exists:
-            writer.writerow(headers)
-        writer.writerow(new_row)
-    flash("Datos guardados en datos.csv", 'success')
-    return redirect(url_for('leer_csv'))
+            except mysql.connector.IntegrityError:
+                return "Error: El email ya está registrado. <a href='/formulario'>Volver</a>"
+            except Error as e:
+                print(f"Error de base de datos: {e}")
+                return "Error al guardar los datos."
+            finally:
+                cursor.close()
+                connection.close()
 
-@app.route('/leer-csv')
-def leer_csv():
-    datos = []
-    if os.path.exists('datos/datos.csv'):
-        with open('datos/datos.csv', 'r') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                datos.append(row)
-    return render_template('resultado.html', titulo="Datos de CSV", datos=datos)
-
-# ==================== Rutas para Persistencia con SQLite ====================
-
-@app.route('/guardar-bd', methods=['POST'])
-def guardar_bd():
-    nombre = request.form.get('nombre')
-    email = request.form.get('email')
+        return redirect(url_for('resultado', nombre=nombre))
     
-    nuevo_usuario = Usuario(nombre=nombre, email=email)
-    
-    try:
-        db.session.add(nuevo_usuario)
-        db.session.commit()
-        flash('Usuario guardado en la base de datos.', 'success')
-    except Exception as e:
-        db.session.rollback()
-        flash(f'Error al guardar usuario: {e}', 'error')
-        
-    return redirect(url_for('leer_bd'))
+    return render_template('formulario.html')
 
-@app.route('/leer-bd')
-def leer_bd():
-    usuarios = Usuario.query.all()
-    return render_template('resultado.html', titulo="Datos de la Base de Datos", datos=usuarios)
+@app.route('/resultado')
+def resultado():
+    nombre = request.args.get('nombre')
+    connection = get_db_connection()
+    usuarios = []
+    if connection and connection.is_connected():
+        cursor = connection.cursor()
+        try:
+            cursor.execute("SELECT nombre, email, fecha FROM usuarios")
+            usuarios = cursor.fetchall()
+        except Error as e:
+            print(f"Error al obtener datos de la base de datos: {e}")
+        finally:
+            cursor.close()
+            connection.close()
+    
+    return render_template('resultado.html', nombre=nombre, usuarios=usuarios)
 
 if __name__ == '__main__':
     app.run(debug=True)
