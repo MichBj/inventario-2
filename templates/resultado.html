@@ -6,7 +6,7 @@
     <h3>Lista de Usuarios</h3>
     <ul>
         {% for usuario in usuarios %}
-            <li>ID: {{ usuario[0] }}, Nombre: {{ usuario[1] }}, Email: {{ usuario[2] }}, Fecha: {{ usuario[3] }}</li>
+            <li>ID: {{ usuario[0] }}, Nombre: {{ usuario[1] }}, Email: {{ usuario[2] }}</li>
         {% endfor %}
     </ul>
     <a href="{{ url_for('index') }}">Volver al inicio</a>

@@ -3,18 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Mi Aplicación{% endblock %}</title>
+    <title>{% block title %}Aplicación Web{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <header>
         <h1>Gestión de Usuarios</h1>
+        {% if current_user.is_authenticated %}
+            <p>Bienvenido, {{ current_user.nombre }} | <a href="{{ url_for('logout') }}">Cerrar Sesión</a></p>
+        {% else %}
+            <p><a href="{{ url_for('login') }}">Iniciar Sesión</a> | <a href="{{ url_for('formulario') }}">Registrarse</a></p>
+        {% endif %}
     </header>
     <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <p style="color: {{ 'green' if category == 'success' else 'red' }};">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         {% block content %}{% endblock %}
     </main>
     <footer>
-        <p>&copy; 2025 - Proyecto xAI</p>
+        <p>&copy; 2025 - Proyecto Desarrollo Web</p>
     </footer>
 </body>
 </html>

@@ -1,3 +1,4 @@
+# conexion/conexion.py
 import mysql.connector
 from mysql.connector import Error
 
@@ -22,26 +23,20 @@ def init_db():
     Crea la tabla 'usuarios' si no existe.
     """
     connection = get_db_connection()
-    if connection:
+    if connection and connection.is_connected():
+        cursor = connection.cursor()
         try:
-            if connection.is_connected():
-                cursor = connection.cursor()
-                cursor.execute('''CREATE TABLE IF NOT EXISTS usuarios 
-                                 (id INT AUTO_INCREMENT PRIMARY KEY, 
-                                  nombre VARCHAR(255) NOT NULL, 
-                                  email VARCHAR(255) NOT NULL UNIQUE, 
-                                  fecha VARCHAR(255))''')
-                connection.commit()
-                print("Tabla 'usuarios' creada o ya existente.")
+            cursor.execute('''CREATE TABLE IF NOT EXISTS usuarios 
+                            (id_usuario INT AUTO_INCREMENT PRIMARY KEY, 
+                             nombre VARCHAR(255) NOT NULL, 
+                             email VARCHAR(255) NOT NULL UNIQUE, 
+                             password VARCHAR(255) NOT NULL)''')
+            connection.commit()
+            print("Tabla 'usuarios' creada o ya existente.")
         except Error as e:
             print(f"Error al crear la tabla: {e}")
         finally:
-            # Asegura que la conexión y el cursor se cierren siempre
-            if 'cursor' in locals() and cursor:
+            if 'cursor' in locals():
                 cursor.close()
             if connection.is_connected():
                 connection.close()
-
-# Ejemplo de uso del script
-if __name__ == '__main__':
-    init_db()
